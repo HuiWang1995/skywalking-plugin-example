@@ -21,7 +21,7 @@ PRGDIR=`dirname "$PRG"`
 [ -z "$OAP_HOME" ] && OAP_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
 
 OAP_LOG_DIR="${OAP_LOG_DIR:-${OAP_HOME}/logs}"
-JAVA_OPTS=" -Xms256M -Xmx512M"
+JAVA_OPTS=" -Xms256M -Xmx512M -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
 if [ ! -d "${OAP_LOG_DIR}" ]; then
     mkdir -p "${OAP_LOG_DIR}"

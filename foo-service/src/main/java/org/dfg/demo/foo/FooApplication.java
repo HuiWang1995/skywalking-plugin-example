@@ -1,6 +1,9 @@
 package org.dfg.demo.foo;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Tags;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,12 +45,18 @@ public class FooApplication {
     @RequestMapping("foo")
     public String foo(@RequestParam("p") String s) {
         jdbc.execute("select 1");
-        return new Base64().encodeToString(s.getBytes(StandardCharsets.UTF_8));
+        return trace(s);
     }
 
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+    }
+
+    @Trace(operationName = "customTraceFunction")
+    @Tags({@Tag(key = "plaintext", value = "arg[0]"), @Tag(key = "ciphertext", value = "returnedObj")})
+    private String trace(String plaintext) {
+        return new Base64().encodeToString(plaintext.getBytes(StandardCharsets.UTF_8));
     }
 
 }
